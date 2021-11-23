@@ -4,4 +4,21 @@
 @File    : reflectFunc.go
 */
 
-package reflect
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func hello() {
+	fmt.Println("hello world")
+}
+
+func main() {
+	h1 := hello
+	fv := reflect.ValueOf(h1)
+	fmt.Println("fv is reflect.Func ?", fv.Kind() == reflect.Func)
+	fv.Call(nil)
+}
+
