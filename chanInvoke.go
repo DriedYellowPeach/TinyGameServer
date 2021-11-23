@@ -6,6 +6,10 @@
 
 package chaninvoke
 
+import (
+	"reflect"
+)
+
 type Server struct {
 	funcSet map[interface{}]interface{}
 	CallChan chan * ArgPack
@@ -55,9 +59,27 @@ func (s *Server) ret(ap *ArgPack, rp *RetPack) {
 
 // todo: * f exception handling
 //       * f type assertion
+//       * f is nil function, error handling
 func (s *Server) Exec(arg *ArgPack) (err error) {
-	result := arg.f.(func(...interface{}) interface{})(arg.args...)
-	s.ret(arg, &RetPack{ret : result})
+	//result := arg.f.(func(...interface{}) interface{})(arg.args...)
+
+	//interface to type func
+	fv := reflect.ValueOf(arg.f)
+
+	// prepare the params, args is []interface{}, params is []reflect.Value
+	var params []reflect.Value
+	if arg.args == nil {
+		params = nil
+	} else if len(arg.args) == 0 {
+		params = make([]reflect.Value, 0)
+	} else {
+		params = make([]reflect.Value, len(arg.args))
+		for i := 0 ; i < len(arg.args) ; i++ {
+			params[i] = reflect.ValueOf(arg.args[i])
+		}
+	}
+	result := fv.Call(params)
+	s.ret(arg, &RetPack{ret : result[0].Interface()})
 	return
 }
 

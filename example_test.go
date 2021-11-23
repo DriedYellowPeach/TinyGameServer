@@ -26,6 +26,18 @@ func TestExample(t *testing.T) {
 			return interface{}(sum)
 		})
 
+		s.Register("f1", func(args ...int) int {
+			product := 1
+			for _, v := range args {
+				product *= v
+			}
+			return product
+		})
+
+		s.Register("f2", func(i, j string) string {
+			return i+j
+		})
+
 		done <- struct{}{}
 
 		for {
@@ -38,6 +50,9 @@ func TestExample(t *testing.T) {
 	go func() {
 		c := chaninvoke.StartClient(10, s)
 		fmt.Println(c.Call("f0", 1, 2, 3, 4))
+		fmt.Println(c.Call("f1", 1, 2, 3, 4))
+		fmt.Println(c.Call("f1", 1))
+		fmt.Println(c.Call("f2", "hello", "world"))
 		done <- struct{}{}
 	}()
 
