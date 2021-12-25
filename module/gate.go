@@ -44,14 +44,8 @@ func (g *Gate) SetDefault(core *Core) {
 }
 
 func (g *Gate) Route(msg string, a *Agent) {
-	//log.Printf("gate Route %v\n", msg)
 	mod, msgHandler := g.router.Route(msg)
-	//log.Printf("msg:%v, msgHandler:%v", mod, msgHandler)
 	g.c.Client.Bind(mod.Server)
-	//log.Println("in gate.route")
-	//g.c.Client.AsyncCall(msgHandler, msg, a, func(){
-	//	log.Println("gate rcv")
-	//})
 	g.c.Client.AsyncCall(msgHandler, msg, a, nil)
 }
 
@@ -71,9 +65,7 @@ func (a *Agent) Run() {
 	input := bufio.NewScanner(a.conn)
 	for input.Scan() {
 		line := input.Text()
-		//log.Println(line)
 		a.gate.Route(line, a)
-		//log.Println("agent.run")
 	}
 }
 

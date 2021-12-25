@@ -40,6 +40,7 @@ func (svr *TCPServer) Run() {
 }
 
 func handleConn(conn net.Conn, gate *module.Gate) {
+	defer conn.Close()
 	agent := module.NewAgent(conn, gate)
 	agent.Run()
 }
